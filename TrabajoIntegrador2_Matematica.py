@@ -1,74 +1,68 @@
-from itertools import product  # Importa función para producto cartesiano de iterables
-from datetime import datetime  # Importa módulo para manejo de fechas y horas
+from itertools import product  # Importa 'product' para calcular el producto cartesiano entre listas
+from datetime import datetime  # Importa 'datetime' para obtener el año actual
 
+# Función que obtiene los dígitos únicos del DNI y los convierte en un conjunto
 def obtener_digitos_unicos(dni):
-    # Convierte el DNI en string, extrae cada dígito, lo convierte a int y crea un conjunto con dígitos únicos
-    return set(int(d) for d in str(dni))
+    return set(int(d) for d in str(dni))  # Convierte el DNI a string, separa cada dígito y lo almacena como entero en un set (elimina duplicados)
 
-def calcular_operaciones_conjuntos(conjuntos):
-    # Desempaqueta los tres conjuntos A, B y C
-    A, B, C = conjuntos
-    # Retorna un diccionario con varias operaciones entre los conjuntos
+# Función que realiza operaciones entre dos conjuntos
+def calcular_operaciones_conjuntos(A, B):
     return {
-        "Unión (A ∪ B ∪ C)": A | B | C,  # Unión de los tres conjuntos
-        "Intersección (A ∩ B ∩ C)": A & B & C,  # Elementos comunes a los tres conjuntos
-        "Diferencia (A - B)": A - B,  # Elementos en A que no están en B
-        "Diferencia (B - C)": B - C,  # Elementos en B que no están en C
-        "Diferencia (C - A)": C - A,  # Elementos en C que no están en A
-        "Diferencia Simétrica (A Δ B)": A ^ B,  # Elementos en A o B pero no en ambos
-        "Diferencia Simétrica (A Δ C)": A ^ C,  # Elementos en A o C pero no en ambos
-        "Diferencia Simétrica (B Δ C)": B ^ C,  # Elementos en B o C pero no en ambos
+        "Unión (A ∪ B)": A | B,                 # Unión: todos los elementos que están en A o B
+        "Intersección (A ∩ B)": A & B,          # Intersección: elementos comunes a A y B
+        "Diferencia (A - B)": A - B,            # Diferencia: elementos que están en A pero no en B
+        "Diferencia (B - A)": B - A,            # Diferencia: elementos que están en B pero no en A
+        "Diferencia Simétrica (A Δ B)": A ^ B,  # Diferencia simétrica: elementos que están en A o en B pero no en ambos
     }
 
+# Función que cuenta cuántas veces aparece cada dígito en un DNI
 def contar_frecuencias(dni):
-    # Inicializa diccionario con claves '0' a '9' y valores 0
-    frecuencias = {str(i): 0 for i in range(10)}
-    # Cuenta la cantidad de veces que aparece cada dígito en el DNI
-    for d in str(dni):
-        frecuencias[d] += 1
-    return frecuencias  # Retorna el diccionario con frecuencias
+    frecuencias = {str(i): 0 for i in range(10)}  # Inicializa un diccionario con los dígitos 0–9 en 0
+    for d in str(dni):                            # Recorre cada dígito del DNI (convertido en string)
+        frecuencias[d] += 1                       # Incrementa la frecuencia del dígito correspondiente
+    return frecuencias
 
+# Función que suma todos los dígitos del DNI
 def suma_digitos(dni):
-    # Suma los dígitos individuales del DNI convertidos a enteros
-    return sum(int(d) for d in str(dni))
+    return sum(int(d) for d in str(dni))  # Convierte los dígitos del DNI a enteros y los suma
 
-def evaluar_expresiones_logicas(conjuntos):
-    mensajes = []  # Lista para guardar mensajes que cumplan condiciones
-    # Si todos los conjuntos tienen al menos 5 elementos, agrega un mensaje
-    if all(len(c) >= 5 for c in conjuntos):
-        mensajes.append("✔ Todos los conjuntos tienen al menos 5 elementos → Diversidad numérica alta")
-    # Encuentra los dígitos comunes a todos los conjuntos
-    digitos_comunes = set.intersection(*conjuntos)
-    # Si hay dígitos comunes, agrega mensaje con esos dígitos ordenados
-    if digitos_comunes:
-        mensajes.append(f"✔ Dígito(s) compartido(s) en todos: {sorted(digitos_comunes)}")
-    return mensajes  # Retorna lista de mensajes
+# Función que evalúa condiciones lógicas entre dos conjuntos A y B
+def evaluar_expresiones_logicas(A, B):
+    mensajes = []
 
+    # Verifica si A tiene más elementos que B y contiene al menos un número impar
+    impares_A = {x for x in A if x % 2 != 0}  # Filtra los números impares del conjunto A
+    if len(A) > len(B) and impares_A:
+        mensajes.append("✔ El conjunto A tiene más elementos que B y contiene números impares → Se considera un conjunto mayor e impar")
+
+    # Verifica si hay dígitos comunes entre A y B
+    comunes = A & B
+    if comunes:
+        mensajes.append(f"✔ Dígito(s) compartido(s) en ambos conjuntos: {sorted(comunes)}")
+
+    return mensajes  # Devuelve los mensajes generados por las condiciones lógicas evaluadas
+
+# Función que determina si un año es bisiesto
 def es_bisiesto(anio):
-    # Determina si un año es bisiesto según las reglas del calendario gregoriano
-    return anio % 4 == 0 and (anio % 100 != 0 or anio % 400 == 0)
+    return anio % 4 == 0 and (anio % 100 != 0 or anio % 400 == 0)  # Regla de años bisiestos
 
+# Función que analiza una lista de años de nacimiento
 def operaciones_anios(anios):
-    anio_actual = datetime.now().year  # Obtiene el año actual
-    # Calcula edades restando año de nacimiento al actual
-    edades = [anio_actual - a for a in anios]
-    # Cuenta cuántos años de nacimiento son pares
-    pares = sum(1 for a in anios if a % 2 == 0)
-    # Cantidad de años impares, calculado como total menos pares
-    impares = len(anios) - pares
+    anio_actual = datetime.now().year              # Obtiene el año actual
+    edades = [anio_actual - a for a in anios]      # Calcula la edad de cada persona
+    pares = sum(1 for a in anios if a % 2 == 0)     # Cuenta cuántos nacieron en año par
+    impares = len(anios) - pares                   # El resto son nacidos en años impares
     mensajes = [
         f"✔ Cantidad de nacidos en año par: {pares}",
         f"✔ Cantidad de nacidos en año impar: {impares}"
     ]
-    # Si todos nacieron después del año 2000, agrega mensaje
-    if all(a > 2000 for a in anios):
+    if all(a > 2000 for a in anios):               # Verifica si todos nacieron después del año 2000
         mensajes.append("✔ Todos nacieron después del 2000 → Grupo Z")
-    # Si al menos uno nació en año bisiesto, agrega mensaje
-    if any(es_bisiesto(a) for a in anios):
+    if any(es_bisiesto(a) for a in anios):         # Verifica si alguno nació en un año bisiesto
         mensajes.append("✔ Al menos uno nació en un año bisiesto → Año especial")
-    # Calcula producto cartesiano de años y edades (tuplas (año, edad))
-    producto_cartesiano = list(product(anios, edades))
-    return mensajes, producto_cartesiano  # Retorna mensajes y lista de tuplas
+    
+    producto_cartesiano = list(product(anios, edades))  # Calcula el producto cartesiano entre los años y las edades
+    return mensajes, producto_cartesiano
 
 # ---------------------------
 # Programa principal
@@ -77,73 +71,68 @@ print("\n╔══════════════════════�
 print("║   Trabajo Integrador 2: Matemática y Programación ║")
 print("╚═══════════════════════════════════════════════════╝\n")
 
-# Inicializa lista para guardar DNIs ingresados
-dnis = []
-print("Ingrese 3 DNIs (presione Enter para usar valores de prueba):")
-# Ciclo para pedir 3 DNIs al usuario
-for i in range(3):
-    entrada = input(f"- DNI del integrante {i+1}: ").strip()  # Lee entrada y elimina espacios
-    # Si se presiona Enter sin ingresar nada, usa DNIs de prueba
-    if entrada == "":
-        dnis = [36876159, 33569007, 32238178]
-        print("Se usaron los DNIs de prueba:", dnis)
-        break  # Sale del ciclo
-    # Si la entrada es numérica, la convierte a entero y agrega a lista
-    elif entrada.isdigit():
-        dnis.append(int(entrada))
-    else:
-        print("DNI inválido. Intente de nuevo.")  # Mensaje para entrada inválida
-        exit()  # Termina programa si hay error
+dnis = []  # Lista para almacenar los dos DNIs
 
-# Genera conjuntos de dígitos únicos para cada DNI
-conjuntos = [obtener_digitos_unicos(dni) for dni in dnis]
+print("Ingrese 2 DNIs (presione Enter para usar valores de prueba):")
+for i in range(2):  # Solicita los DNIs de los 2 integrantes
+    entrada = input(f"- DNI del integrante {i+1}: ").strip()
+    if entrada == "":  # Si se presiona Enter sin ingresar nada
+        dnis = [36876159, 32238178]  # Usa DNIs de prueba
+        print("Se usaron los DNIs de prueba:", dnis)
+        break
+    elif entrada.isdigit():         # Verifica que la entrada sea numérica
+        dnis.append(int(entrada))   # Agrega el DNI a la lista
+    else:
+        print("DNI inválido. Intente de nuevo.")  # Mensaje de error por entrada inválida
+        exit()                                     # Termina el programa
+
+# Genera los conjuntos A y B a partir de los DNIs
+A, B = [obtener_digitos_unicos(dni) for dni in dnis]  # Aplica la función a cada DNI
 print("\n╔══════════════════════╗")
 print("║ Conjuntos generados  ║")
 print("╚══════════════════════╝")
-# Muestra cada conjunto con letra A, B, C y sus dígitos ordenados
-for i, conj in enumerate(conjuntos):
-    print(f"Conjunto {chr(65+i)} (DNI {dnis[i]}): {sorted(conj)}")
+print(f"Conjunto A (DNI {dnis[0]}): {sorted(A)}")  # Muestra los dígitos únicos del primer DNI
+print(f"Conjunto B (DNI {dnis[1]}): {sorted(B)}")  # Muestra los dígitos únicos del segundo DNI
 
-# Realiza y muestra operaciones entre conjuntos
+# Realiza operaciones entre conjuntos A y B
 print("\n╔═════════════════════════════════╗")
 print("║ Operaciones entre los conjuntos ║")
 print("╚═════════════════════════════════╝")
-operaciones = calcular_operaciones_conjuntos(conjuntos)
+operaciones = calcular_operaciones_conjuntos(A, B)  # Calcula las operaciones de conjuntos
 for nombre, resultado in operaciones.items():
-    print(f"{nombre}: {sorted(resultado)}")  # Muestra resultado ordenado
+    print(f"{nombre}: {sorted(resultado)}")  # Muestra los resultados ordenados
 
-# Muestra frecuencias de dígitos y suma para cada DNI
+# Muestra las frecuencias de dígitos y la suma de los mismos por cada DNI
 print("\n╔════════════════════════════════╗")
 print("║ Frecuencias y suma de dígitos  ║")
 print("╚════════════════════════════════╝")
 for i, dni in enumerate(dnis):
-    frec = contar_frecuencias(dni)  # Cuenta frecuencia de dígitos
-    suma = suma_digitos(dni)  # Suma dígitos
+    frec = contar_frecuencias(dni)  # Cuenta las repeticiones de cada dígito
+    suma = suma_digitos(dni)        # Suma todos los dígitos del DNI
     print(f"DNI {dni} → Frecuencias: {frec} | Suma: {suma}")
 
-# Evalúa condiciones lógicas sobre los conjuntos y muestra mensajes
+# Evalúa condiciones lógicas entre los conjuntos
 print("\n╔═══════════════════════════════════╗")
 print("║ Evaluación de condiciones lógicas ║")
 print("╚═══════════════════════════════════╝")
-for mensaje in evaluar_expresiones_logicas(conjuntos):
-    print("-", mensaje)
+for mensaje in evaluar_expresiones_logicas(A, B):
+    print("-", mensaje)  # Muestra los mensajes resultantes
 
-# Define años de nacimiento de prueba
-anios = [1986, 1998, 2004]
+# Años de nacimiento (caso de prueba)
+anios = [1986, 2004]  # Lista de años de nacimiento predefinida
 print("\n╔════════════════════════════════╗")
 print("║ Años de nacimiento (de prueba) ║")
 print("╚════════════════════════════════╝")
 print("Años:", anios)
-# Ejecuta operaciones sobre años y obtiene mensajes y producto cartesiano
-mensajes_anios, producto = operaciones_anios(anios)
+mensajes_anios, producto = operaciones_anios(anios)  # Llama a la función para obtener mensajes y producto cartesiano
 for mensaje in mensajes_anios:
     print("-", mensaje)
 
-# Muestra producto cartesiano (tuplas año, edad)
+# Muestra el producto cartesiano entre año y edad
 print("\n╔═════════════════════════════════╗")
 print("║ Producto cartesiano (año, edad) ║")
 print("╚═════════════════════════════════╝")
 for par in producto:
     print(par)
 
-print("\n✅ Fin del programa.\n")
+print("\n✅ Fin del programa.\n")  # Mensaje final indicando que el programa ha terminado correctamente
